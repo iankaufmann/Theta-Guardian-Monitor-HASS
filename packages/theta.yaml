@@ -1,0 +1,47 @@
+##########################################################################
+## Package - Theta
+##########################################################################
+
+theta:
+
+  ##########################################################################
+  ## Sensors
+  ##########################################################################
+
+  sensor:
+
+    - platform: command_line
+      name: Theta - Guardian Monitor
+      command: "bash /config/bash_scripts/theta.sh | xargs"
+      scan_interval: 300
+      json_attributes:
+        - last_update
+      value_template: "{{ value_json.status }}"
+
+    - platform: template  
+      sensors:
+
+        theta_guardian_monitor_last_update: 
+          friendly_name: "Theta - Guardian Monitor - Last Update"
+          value_template: "{{ state_attr('sensor.theta_guardian_monitor', 'last_update') }}"
+          device_class: timestamp
+          icon_template: "mdi:timer"
+
+  ##########################################################################
+  ## Automations
+  ##########################################################################
+
+  automation:
+
+    - id: theta_guardian_node_offline
+      alias: Theta - Guardian Node Offline
+      description: ''
+      mode: restart
+      trigger:
+        - platform: state
+          entity_id: sensor.theta_guardian_monitor
+          from: 'Online'
+          for: "00:00:30"
+      action:
+
+        # Place notification method here

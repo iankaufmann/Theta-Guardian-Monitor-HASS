@@ -11,8 +11,17 @@ Their suggested method of using this is to link it up with UptimeRobot.
 
 However, if you prefer to do things yourself (and like having things in Home Assistant), then this will help you get it integrated.
 
-Since it's just a simple .txt file without much structure to it, I needed to create a bash script to process it first.
+### Bash Script
 
-### Home Assistant
+Since it's just a simple .txt file without much structure to it, I needed to create a bash script to process it first.  This is what the Home Assistant command_line sensor will read from.
+
+To install it, copy the `bash_scripts` folder to your `/config` directory.
+
+### Home Assistant Package
 
 The home assistant package consists of a command_line sensor and a template sensor, as well as an automation for setting up an alert if your node is offline.
+
+To install it, copy the `theta.yaml` file to your `/config/packages` directory.
+
+If you don't have packages configured, look here:
+https://www.home-assistant.io/docs/configuration/packages/

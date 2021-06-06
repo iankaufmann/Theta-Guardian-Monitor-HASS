@@ -25,3 +25,7 @@ To install it, copy the `theta.yaml` file to your `/config/packages` directory.
 
 If you don't have packages configured, look here:
 https://www.home-assistant.io/docs/configuration/packages/
+
+### Screenshot
+
+<img width="480" alt="Theta-Guardian-Monitor-HASS" src="https://user-images.githubusercontent.com/1100001/120906583-54451a00-c620-11eb-8bbf-18618cf33314.png">

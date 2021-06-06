@@ -96,7 +96,7 @@ if [ "${guardian_node_address}" != "" ]; then
     ampm="${date_time_array[4]}"
 
     # If the time is AM and the hour is 12, set hour to zero
-    if [ "${ampm}" == "AM" ]; then 
+    if [ "${ampm}" == "AM" ] && [ "${hour}" == "12" ]; then 
         hour="00"
     fi
 

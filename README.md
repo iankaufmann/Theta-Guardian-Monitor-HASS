@@ -13,7 +13,7 @@ However, if you prefer to do things yourself (and like having things in Home Ass
 
 ### Bash Script
 
-Since it's just a simple .txt file without much structure to it, I needed to create a bash script to process it first.  This is what the Home Assistant command_line sensor will read from.
+Since the offline list just a simple .txt file without much structure to it, I needed to create a bash script to process it first.  This is what the Home Assistant command_line sensor will read from.
 
 I could have probably just greped the output of curl to look for the node address as a 1 liner, but I wanted the sensor to also tell me the last update time that is published in the first line of the list.  It uses a non-standard date format for some reason so I had to write something that would parse it into a sane format that Home Assistant would understand and display properly.  
 

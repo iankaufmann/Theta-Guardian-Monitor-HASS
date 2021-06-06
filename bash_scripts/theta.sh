@@ -43,23 +43,24 @@ if [ "${guardian_node_address}" != "" ]; then
     ## Parse And Convert Date
     ##########################################################
 
-    # This will hold the parts of the date
-    date_array=()
+    # These will hold the parts of the date and time
+    date_time_array=()
+    time_array=()
 
-    # Split the date string into parts on comma
-    date_string_split="$(echo "${list_update_date}" | tr "," "\n")"
+    # Split the last update date string into parts on comma
+    date_time_string_split="$(echo "${list_update_date}" | tr "," "\n")"
 
-    # Load the parts into the date array
-    for part in $date_string_split
+    # Load the parts into the date/time array
+    for part in $date_time_string_split
     do
-        date_array+=("${part}")
+        date_time_array+=("${part}")
     done
 
-    # Pop off the first array element (Weekday)
-    date_array=("${date_array[@]:1}")
+    # Pop off the first array element (It's the weekday and we don't need it)
+    date_time_array=("${date_time_array[@]:1}")
 
     # Convert the month name into it's numeric version
-    case "${date_array[0]}" in
+    case "${date_time_array[0]}" in
         January) month="01" ;;
         February) month="02" ;;
         March) month="03" ;;
@@ -74,18 +75,46 @@ if [ "${guardian_node_address}" != "" ]; then
         December) month="12" ;;
     esac
 
-    # Build date string in Y-m-d H:M:S format
-    date_string="${date_array[2]}-${month}-${date_array[1]} ${date_array[3]}" 
+    # Store date parts and format them 
+    year=`printf "%04d\n" ${date_time_array[2]}`
+    month=`printf "%02d\n" ${month}`
+    day=`printf "%02d\n" ${date_time_array[1]}`
 
-    # Convert date to unix timestamp
-    date_in_seconds=`date --utc --date="${date_string}" +"%s"`
+    # Split the time string into parts on colon
+    time_string_split="$(echo "${date_time_array[3]}" | tr ":" "\n")"
 
-    # If the time is PM, add 12 hours
-    if [ "${date_array[4]}" == "PM" ]; then 
+    # Load the parts into the time array
+    for part in $time_string_split
+    do
+        time_array+=("${part}")
+    done
+
+    # Store time parts and format them
+    hour=`printf "%02d\n" ${time_array[0]}`
+    minute=`printf "%02d\n" ${time_array[1]}`
+    second=`printf "%02d\n" ${time_array[2]}`
+    ampm="${date_time_array[4]}"
+
+    # If the time is AM and the hour is 12, set hour to zero
+    if [ "${ampm}" == "AM" ]; then 
+        hour="00"
+    fi
+
+    # Build time string
+    time_string="${hour}:${minute}:${second}"
+
+    # Build date/time string in Y-m-d H:M:S format
+    date_time_string="${year}-${month}-${day} ${time_string}" 
+
+    # Convert date/time to unix timestamp
+    date_in_seconds=`date --utc --date="${date_time_string}" +"%s"`
+
+    # If the time is PM and the hour is not 12, add 12 hours
+    if [ "${ampm}" == "PM" ] && [ "${hour}" != "12" ]; then 
         date_in_seconds=`expr ${date_in_seconds} + 43200`
     fi
 
-    # Store final date format as Y-m-dTH:M:SZ UTC
+    # Store final date/time format as Y-m-dTH:M:SZ UTC
     list_update_date=`date --utc -d @${date_in_seconds} +"%Y-%m-%dT%H:%M:%SZ"`
 
 fi

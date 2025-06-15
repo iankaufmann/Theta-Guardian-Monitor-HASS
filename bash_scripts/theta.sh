@@ -6,6 +6,7 @@
 
 # Enter your guardian node address
 guardian_node_address=""
+guardian_node_address_lower="$(echo ${guardian_node_address} | tr '[:upper:]' '[:lower:]')"
 
 # Hold list of offline nodes
 offline_nodes=()
@@ -34,7 +35,8 @@ if [ "${guardian_node_address}" != "" ]; then
 
         # Store any line that begins with "0x" as an address
         if [ "${line:0:2}" == "0x" ]; then 
-            offline_nodes=("${line}")
+            line_lower="$(echo ${line} | tr '[:upper:]' '[:lower:]')"
+            offline_nodes+=("${line_lower}")
         fi  
 
     done <<< "$data"
@@ -61,15 +63,15 @@ if [ "${guardian_node_address}" != "" ]; then
 
     # Convert the month name into it's numeric version
     case "${date_time_array[0]}" in
-        January) month="01" ;;
-        February) month="02" ;;
-        March) month="03" ;;
-        April) month="04" ;;
-        May) month="05" ;;
-        June) month="06" ;;
-        July) month="07" ;;
-        August) month="08" ;;
-        September) month="09" ;;
+        January) month="1" ;;
+        February) month="2" ;;
+        March) month="3" ;;
+        April) month="4" ;;
+        May) month="5" ;;
+        June) month="6" ;;
+        July) month="7" ;;
+        August) month="8" ;;
+        September) month="9" ;;
         October) month="10" ;;
         November) month="11" ;;
         December) month="12" ;;
@@ -78,7 +80,7 @@ if [ "${guardian_node_address}" != "" ]; then
     # Store date parts and format them 
     year=`printf "%04d\n" ${date_time_array[2]}`
     month=`printf "%02d\n" ${month}`
-    day=`printf "%02d\n" ${date_time_array[1]}`
+    day=`printf "%02d\n" $(expr ${date_time_array[1]} + 0)`
 
     # Split the time string into parts on colon
     time_string_split="$(echo "${date_time_array[3]}" | tr ":" "\n")"
@@ -96,7 +98,7 @@ if [ "${guardian_node_address}" != "" ]; then
     ampm="${date_time_array[4]}"
 
     # If the time is AM and the hour is 12, set hour to zero
-    if [ "${ampm}" == "AM" ] && [ "${hour}" == "12" ]; then 
+    if [ "${ampm}" == "AM" ] && [ "${hour}" == "12" ]; then  
         hour="00"
     fi
 
@@ -125,7 +127,7 @@ fi
 
 status="Online"
 
-if [[ " ${offline_nodes[@]} " =~ " ${guardian_node_address} " ]]; then
+if [[ ${offline_nodes[@]} =~ ${guardian_node_address_lower} ]]; then
     status="Offline"
 fi 
 
